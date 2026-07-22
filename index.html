@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -5,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PDF Slicer :: Recortador de Documentos A4</title>
   
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJidXJseXdvb2QiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48cGF0aCBkPSJNMTQgMmgyYTIgMiAwIDAgMSAyIDJ2MTZhMiAyIDAgMCAxLTIgMmgtOGEyIDIgMCAwIDEtMi0ydi0yIj48L3BhdGg+PHBhdGggZD0iTTE0IDJ2NGEyIDIgMCAwIDAgMiAyaDQiPjwvcGF0aD48Y2lyY2xlIGN4PSI1IiBjeT0iOCIgcj0iMiI+PC9jaXJjbGU+PGNpcmNsZSBjeD0iNSIgY3k9IjE2IiByPSIyIj48L2NpcmNsZT48cGF0aCBkPSJNOS42NCA4LjkyIDE0IDE0Ij48L3BhdGg+PHBhdGggZD0iTTE0IDguOTIgOS42NCAxNCI+PC9wYXRoPjwvc3ZnPg==">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJidXJseXdvb2QiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48cGF0aCBkPSJNMTQgMmgyYTIgMiAwIDAgMSAyIDJ2MTZhMiAyIDAgMCAxLTIgMmgtOGEyIDIgMCAwIDEtMi0ydi0yIj48L3BhdGg+PHBhdGggZD0iTTE0IDJ2NGEyIDIgMCAwIDAgMiAyaDQiPjwvcGF0aD48Y2lyY2xlIGN4PSI1IiBjeT0iOCIgcj0iMiI+PC9jaXJjbGU+PGNpcmNsZSBjeD0iNSIgY3k9IjE2IiByPSIyIj48L2NpcmNsZT48cGF0aCBkPSJNOS42NCA8LjkyIDE0IDE0Ij48L3BhdGg+PHBhdGggZD0iTTE0IDguOTIgOS42NCAxNCI+PC9wYXRoPjwvc3ZnPg==">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
   <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
@@ -69,7 +70,6 @@
       position: sticky; top: 0; z-index: 1000;
       padding: 12px 20px; display: flex;
       flex-direction: column; align-items: center;
-      transition: background-color 0.3s ease, border-color 0.3s ease;
     }
 
     header { text-align: center; margin-bottom: 12px; }
@@ -151,13 +151,13 @@
 
     .results-grid {
       display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 15px; margin-top: 15px;
+      gap: 20px; margin-top: 15px;
     }
 
     .result-card {
       background: var(--bg-header); border: 1px solid var(--border-color);
-      border-radius: var(--radius); padding: 12px 16px;
-      display: flex; flex-direction: column; gap: 10px; position: relative;
+      border-radius: var(--radius); padding: 14px;
+      display: flex; flex-direction: column; gap: 12px; position: relative;
     }
 
     .result-card-header { display: flex; align-items: center; justify-content: space-between; }
@@ -166,20 +166,65 @@
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;
     }
 
-    .preview-trigger {
-      font-size: 12px; color: var(--primary); cursor: pointer;
-      text-decoration: underline; display: inline-flex; align-items: center; gap: 4px;
+    /* ESTILOS DA PRÉVIA DO CARD DE DOWNLOAD (TELA 3 CORRIGIDA) */
+    .result-card-preview {
+      width: 100%; height: 180px; background: #1a1a1a;
+      border-radius: 6px; border: 1px solid var(--border-color);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; padding: 6px;
     }
 
-    .preview-tooltip {
-      display: none; position: absolute; bottom: 105%; left: 50%;
-      transform: translateX(-50%); background: #000; border: 2px solid var(--primary);
-      padding: 6px; border-radius: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.7);
-      z-index: 2000; pointer-events: none; width: 200px;
+    .result-card-preview img {
+      max-width: 100%; max-height: 100%; object-fit: contain;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3); border-radius: 2px;
     }
 
-    .preview-tooltip img { width: 100%; height: auto; display: block; border-radius: 3px; }
-    .preview-container-hover:hover .preview-tooltip { display: block; }
+    /* ESTILOS DO MODAL DE PRÉ-VISUALIZAÇÃO (TELA 2) */
+    .modal-backdrop {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
+      z-index: 3000; display: none; justify-content: center; align-items: center;
+    }
+
+    .modal-content {
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      border-radius: var(--radius); box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      width: 90%; max-width: 800px; max-height: 90vh; display: flex;
+      flex-direction: column; overflow: hidden; animation: scaleUp 0.2s ease;
+    }
+
+    @keyframes scaleUp { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    .modal-header {
+      padding: 15px 20px; background: var(--bg-header); border-bottom: 1px solid var(--border-color);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .modal-header h2 { margin: 0; font-size: 18px; color: var(--primary); }
+
+    .modal-body {
+      padding: 20px; display: flex; flex-direction: column; align-items: center;
+      overflow-y: auto; gap: 15px; background: var(--bg-body);
+    }
+
+    .preview-a4-paper {
+      width: 320px; height: 452px; background: white; box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      border-radius: 3px; display: flex; align-items: center; justify-content: center;
+      padding: 15px; position: relative;
+    }
+
+    .preview-a4-paper canvas {
+      max-width: 100%; max-height: 100%; object-fit: contain;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15); border: 1px solid #ddd;
+    }
+
+    .modal-controls {
+      display: flex; gap: 10px; justify-content: center; width: 100%; flex-wrap: wrap;
+    }
+
+    .modal-footer {
+      padding: 15px 20px; background: var(--bg-header); border-top: 1px solid var(--border-color);
+      display: flex; justify-content: space-between; align-items: center;
+    }
   </style>
 </head>
 <body>
@@ -204,7 +249,7 @@
       <button id="next-page" class="btn-secondary" disabled>Próxima ➡️</button>
       
       <button id="clear-rects" class="btn-danger" disabled>🗑️ Limpar Seleções</button>
-      <button id="process-pdf" class="btn-primary" disabled>⚡ Processar Recortes</button>
+      <button id="process-pdf" class="btn-primary" disabled>👁️ Pré-visualizar & Processar</button>
       <button id="reset-app" class="btn-warning" disabled>🔄 Reiniciar</button>
 
       <button id="toggle-theme" class="btn-secondary">🌙 Tema Escuro</button>
@@ -216,9 +261,41 @@
       <canvas id="pdf-canvas"></canvas>
     </div>
 
+    <!-- TELA 3: PAINEL DE RESULTADOS COM CARDS E PREVIAS CORRIGIDAS -->
     <div id="results-panel" class="results-container">
       <h3>📄 Documentos Prontos para Download</h3>
       <div id="results-grid" class="results-grid"></div>
+    </div>
+  </div>
+
+  <!-- TELA 2: MODAL INTERMEDIÁRIO DE AJUSTES E ROTAÇÃO -->
+  <div id="preview-modal" class="modal-backdrop">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🔍 Pré-visualização do Documento A4</h2>
+        <span id="modal-doc-index" style="font-weight: bold; color: var(--text-muted); font-size: 14px;">Doc 1 de 1</span>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-controls">
+          <button id="btn-rotate-left" class="btn-secondary">↺ Girar 90° Esquerda</button>
+          <button id="btn-rotate-right" class="btn-secondary">↻ Girar 90° Direita</button>
+        </div>
+
+        <div class="preview-a4-paper">
+          <canvas id="modal-a4-canvas"></canvas>
+        </div>
+
+        <div class="modal-controls">
+          <button id="btn-prev-crop" class="btn-secondary">⬅️ Documento Anterior</button>
+          <button id="btn-next-crop" class="btn-secondary">Próximo Documento ➡️</button>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="btn-close-modal" class="btn-danger">Cancelar</button>
+        <button id="btn-confirm-export" class="btn-success">💾 Gerar e Baixar Todos em PDF</button>
+      </div>
     </div>
   </div>
 
@@ -238,6 +315,9 @@
     let isDrawing = false;
     let startX, startY, currentRect = null;
 
+    let processedCrops = []; 
+    let currentModalIndex = 0;
+
     const fileInput = document.getElementById('pdf-file');
     const btnPrev = document.getElementById('prev-page');
     const btnNext = document.getElementById('next-page');
@@ -249,13 +329,23 @@
     const resultsPanel = document.getElementById('results-panel');
     const resultsGrid = document.getElementById('results-grid');
 
+    const previewModal = document.getElementById('preview-modal');
+    const modalA4Canvas = document.getElementById('modal-a4-canvas');
+    const modalA4Ctx = modalA4Canvas.getContext('2d');
+    const btnRotateLeft = document.getElementById('btn-rotate-left');
+    const btnRotateRight = document.getElementById('btn-rotate-right');
+    const btnPrevCrop = document.getElementById('btn-prev-crop');
+    const btnNextCrop = document.getElementById('btn-next-crop');
+    const btnCloseModal = document.getElementById('btn-close-modal');
+    const btnConfirmExport = document.getElementById('btn-confirm-export');
+    const modalDocIndex = document.getElementById('modal-doc-index');
+
     const savedTheme = localStorage.getItem('theme') || 'dark';
     setTheme(savedTheme);
 
     btnTheme.addEventListener('click', () => {
       const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      setTheme(newTheme);
+      setTheme(currentTheme === 'dark' ? 'light' : 'dark');
     });
 
     function setTheme(theme) {
@@ -274,7 +364,6 @@
       if (!file) return;
 
       originalFileName = file.name.replace(/\.[^/.]+$/, "");
-
       fileLabel.textContent = "⏳ Carregando...";
       try {
         rawPdfBytes = await file.arrayBuffer();
@@ -287,7 +376,7 @@
         renderPage(pageNum);
         updateUIState();
       } catch (err) {
-        alert("Erro ao ler PDF. Verifique se o arquivo está correto.");
+        alert("Erro ao ler PDF.");
         fileLabel.textContent = "📂 Abrir PDF Escaneado";
       }
     });
@@ -369,7 +458,6 @@
 
     function updateUIState() {
       const hasPdf = pdfDoc !== null;
-
       btnPrev.disabled = !hasPdf || pageNum <= 1;
       btnNext.disabled = !hasPdf || pageNum >= pdfDoc.numPages;
       btnClear.disabled = !hasPdf || selections.length === 0;
@@ -392,31 +480,21 @@
       resultsGrid.innerHTML = '';
       fileLabel.textContent = "📂 Abrir PDF Escaneado";
       document.getElementById('page-num').textContent = "Página: 0 / 0";
-      
       updateUIState();
     });
 
-    btnPrev.addEventListener('click', () => {
-      if (pageNum <= 1) return;
-      pageNum--;
-      renderPage(pageNum);
-    });
+    btnPrev.addEventListener('click', () => { if (pageNum > 1) { pageNum--; renderPage(pageNum); } });
+    btnNext.addEventListener('click', () => { if (pdfDoc && pageNum < pdfDoc.numPages) { pageNum++; renderPage(pageNum); } });
 
-    btnNext.addEventListener('click', () => {
-      if (!pdfDoc || pageNum >= pdfDoc.numPages) return;
-      pageNum++;
-      renderPage(pageNum);
-    });
+    // --- TELA 2: MODAL DE PRÉ-VISUALIZAÇÃO ---
 
     btnProcess.addEventListener('click', async () => {
       if (selections.length === 0) return;
       
-      btnProcess.textContent = "⏳ Gerando...";
+      btnProcess.textContent = "⏳ Gerando Prévia...";
       btnProcess.disabled = true;
 
-      const { PDFDocument, PageSizes } = PDFLib;
       const page = await pdfDoc.getPage(pageNum);
-      
       const exportScale = 3.0; 
       const viewport = page.getViewport({ scale: exportScale });
       
@@ -427,7 +505,7 @@
 
       await page.render({ canvasContext: offContext, viewport: viewport }).promise;
 
-      resultsPanel.style.display = 'block';
+      processedCrops = [];
 
       for (let i = 0; i < selections.length; i++) {
         const sel = selections[i];
@@ -448,7 +526,130 @@
           0, 0, cropWidth, cropHeight
         );
 
-        const imgDataUrl = cropCanvas.toDataURL('image/jpeg', 0.95);
+        processedCrops.push({
+          originalCanvas: cropCanvas,
+          rotation: 0
+        });
+      }
+
+      btnProcess.textContent = "👁️ Pré-visualizar & Processar";
+      btnProcess.disabled = false;
+
+      currentModalIndex = 0;
+      previewModal.style.display = 'flex';
+      renderModalPreview();
+    });
+
+    function renderModalPreview() {
+      const currentCrop = processedCrops[currentModalIndex];
+      modalDocIndex.textContent = `Documento ${currentModalIndex + 1} de ${processedCrops.length}`;
+
+      btnPrevCrop.disabled = currentModalIndex === 0;
+      btnNextCrop.disabled = currentModalIndex === processedCrops.length - 1;
+
+      const a4Width = 595.28;
+      const a4Height = 841.89;
+      
+      modalA4Canvas.width = a4Width;
+      modalA4Canvas.height = a4Height;
+
+      modalA4Ctx.fillStyle = '#ffffff';
+      modalA4Ctx.fillRect(0, 0, a4Width, a4Height);
+
+      const rotatedCanvas = document.createElement('canvas');
+      const rotCtx = rotatedCanvas.getContext('2d');
+      const srcCanvas = currentCrop.originalCanvas;
+
+      if (currentCrop.rotation % 180 === 0) {
+        rotatedCanvas.width = srcCanvas.width;
+        rotatedCanvas.height = srcCanvas.height;
+      } else {
+        rotatedCanvas.width = srcCanvas.height;
+        rotatedCanvas.height = srcCanvas.width;
+      }
+
+      rotCtx.translate(rotatedCanvas.width / 2, rotatedCanvas.height / 2);
+      rotCtx.rotate((currentCrop.rotation * Math.PI) / 180);
+      rotCtx.drawImage(srcCanvas, -srcCanvas.width / 2, -srcCanvas.height / 2);
+
+      const imgAspect = rotatedCanvas.width / rotatedCanvas.height;
+      const a4Aspect = a4Width / a4Height;
+
+      let drawWidth, drawHeight;
+      const margin = 40;
+
+      if (imgAspect > a4Aspect) {
+        drawWidth = a4Width - margin;
+        drawHeight = drawWidth / imgAspect;
+      } else {
+        drawHeight = a4Height - margin;
+        drawWidth = drawHeight * imgAspect;
+      }
+
+      const xPos = (a4Width - drawWidth) / 2;
+      const yPos = (a4Height - drawHeight) / 2;
+
+      modalA4Ctx.drawImage(rotatedCanvas, xPos, yPos, drawWidth, drawHeight);
+    }
+
+    btnRotateLeft.addEventListener('click', () => {
+      processedCrops[currentModalIndex].rotation = (processedCrops[currentModalIndex].rotation - 90 + 360) % 360;
+      renderModalPreview();
+    });
+
+    btnRotateRight.addEventListener('click', () => {
+      processedCrops[currentModalIndex].rotation = (processedCrops[currentModalIndex].rotation + 90) % 360;
+      renderModalPreview();
+    });
+
+    btnPrevCrop.addEventListener('click', () => {
+      if (currentModalIndex > 0) {
+        currentModalIndex--;
+        renderModalPreview();
+      }
+    });
+
+    btnNextCrop.addEventListener('click', () => {
+      if (currentModalIndex < processedCrops.length - 1) {
+        currentModalIndex++;
+        renderModalPreview();
+      }
+    });
+
+    btnCloseModal.addEventListener('click', () => {
+      previewModal.style.display = 'none';
+    });
+
+    // --- TELA 3: GERAR PDFS E EXIBIR CARDS DE DOWNLOAD CORRIGIDOS ---
+
+    btnConfirmExport.addEventListener('click', async () => {
+      btnConfirmExport.textContent = "⏳ Salvando...";
+      btnConfirmExport.disabled = true;
+
+      const { PDFDocument, PageSizes } = PDFLib;
+      resultsPanel.style.display = 'block';
+      resultsGrid.innerHTML = '';
+
+      for (let i = 0; i < processedCrops.length; i++) {
+        const crop = processedCrops[i];
+
+        const rotatedCanvas = document.createElement('canvas');
+        const rotCtx = rotatedCanvas.getContext('2d');
+        const srcCanvas = crop.originalCanvas;
+
+        if (crop.rotation % 180 === 0) {
+          rotatedCanvas.width = srcCanvas.width;
+          rotatedCanvas.height = srcCanvas.height;
+        } else {
+          rotatedCanvas.width = srcCanvas.height;
+          rotatedCanvas.height = srcCanvas.width;
+        }
+
+        rotCtx.translate(rotatedCanvas.width / 2, rotatedCanvas.height / 2);
+        rotCtx.rotate((crop.rotation * Math.PI) / 180);
+        rotCtx.drawImage(srcCanvas, -srcCanvas.width / 2, -srcCanvas.height / 2);
+
+        const imgDataUrl = rotatedCanvas.toDataURL('image/jpeg', 0.95);
 
         const newPdf = await PDFDocument.create();
         const newPage = newPdf.addPage(PageSizes.A4);
@@ -456,7 +657,7 @@
 
         const embeddedImage = await newPdf.embedJpg(imgDataUrl);
 
-        const imgAspect = cropWidth / cropHeight;
+        const imgAspect = rotatedCanvas.width / rotatedCanvas.height;
         const a4Aspect = a4Width / a4Height;
 
         let drawWidth, drawHeight;
@@ -478,22 +679,20 @@
           width: drawWidth, height: drawHeight,
         });
 
-        // ALTERAÇÃO PARA MELHORAR CONFIANÇA DO NAVEGADOR
         const pdfDataUri = await newPdf.saveAsBase64({ dataUri: true });
-        
-        const suffix = selections.length > 1 ? `_split_${i + 1}` : `_recortado`;
+
+        const suffix = processedCrops.length > 1 ? `_split_${i + 1}` : `_recortado`;
         const fileName = `${originalFileName}${suffix}_pag${pageNum}.pdf`;
 
         const card = document.createElement('div');
-        card.className = 'result-card preview-container-hover';
+        card.className = 'result-card';
 
         card.innerHTML = `
           <div class="result-card-header">
             <span class="result-card-title" title="${fileName}">${fileName}</span>
-            <span class="preview-trigger">👁️ Prévia</span>
           </div>
-          
-          <div class="preview-tooltip">
+
+          <div class="result-card-preview">
             <img src="${imgDataUrl}" alt="Prévia do documento">
           </div>
 
@@ -505,8 +704,9 @@
         resultsGrid.appendChild(card);
       }
 
-      btnProcess.textContent = "⚡ Processar Recortes";
-      btnProcess.disabled = false;
+      btnConfirmExport.textContent = "💾 Gerar e Baixar Todos em PDF";
+      btnConfirmExport.disabled = false;
+      previewModal.style.display = 'none';
       clearSelectionsUI();
       
       resultsPanel.scrollIntoView({ behavior: 'smooth' });
