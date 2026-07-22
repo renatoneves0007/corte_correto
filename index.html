@@ -163,10 +163,9 @@
     .result-card-header { display: flex; align-items: center; justify-content: space-between; }
     .result-card-title {
       font-weight: 600; font-size: 14px; color: var(--text-main);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px;
     }
 
-    /* ESTILOS DA PRÉVIA DO CARD DE DOWNLOAD (TELA 3 CORRIGIDA) */
     .result-card-preview {
       width: 100%; height: 180px; background: #1a1a1a;
       border-radius: 6px; border: 1px solid var(--border-color);
@@ -179,7 +178,6 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.3); border-radius: 2px;
     }
 
-    /* ESTILOS DO MODAL DE PRÉ-VISUALIZAÇÃO (TELA 2) */
     .modal-backdrop {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
@@ -261,14 +259,12 @@
       <canvas id="pdf-canvas"></canvas>
     </div>
 
-    <!-- TELA 3: PAINEL DE RESULTADOS COM CARDS E PREVIAS CORRIGIDAS -->
     <div id="results-panel" class="results-container">
       <h3>📄 Documentos Prontos para Download</h3>
       <div id="results-grid" class="results-grid"></div>
     </div>
   </div>
 
-  <!-- TELA 2: MODAL INTERMEDIÁRIO DE AJUSTES E ROTAÇÃO -->
   <div id="preview-modal" class="modal-backdrop">
     <div class="modal-content">
       <div class="modal-header">
@@ -486,8 +482,6 @@
     btnPrev.addEventListener('click', () => { if (pageNum > 1) { pageNum--; renderPage(pageNum); } });
     btnNext.addEventListener('click', () => { if (pdfDoc && pageNum < pdfDoc.numPages) { pageNum++; renderPage(pageNum); } });
 
-    // --- TELA 2: MODAL DE PRÉ-VISUALIZAÇÃO ---
-
     btnProcess.addEventListener('click', async () => {
       if (selections.length === 0) return;
       
@@ -620,7 +614,26 @@
       previewModal.style.display = 'none';
     });
 
-    // --- TELA 3: GERAR PDFS E EXIBIR CARDS DE DOWNLOAD CORRIGIDOS ---
+    // --- FUNÇÃO DE DOWNLOAD LIMPO (CONVERTE PARA BLOB NATIVO SEM BLOQUEIO DO WINDOWS) ---
+    function triggerCleanDownload(pdfBytesArray, fileName) {
+      const blob = new Blob([pdfBytesArray], { type: 'application/pdf' });
+      const blobUrl = URL.createObjectURL(blob);
+      
+      const tempLink = document.createElement('a');
+      tempLink.href = blobUrl;
+      tempLink.download = fileName;
+      document.body.appendChild(tempLink);
+      
+      // Dispara o download como um clique do usuário nativo
+      tempLink.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+      
+      setTimeout(() => {
+        document.body.removeChild(tempLink);
+        URL.revokeObjectURL(blobUrl);
+      }, 200);
+    }
+
+    // --- EXPORTAÇÃO FINAL DE PDFS ---
 
     btnConfirmExport.addEventListener('click', async () => {
       btnConfirmExport.textContent = "⏳ Salvando...";
@@ -679,7 +692,8 @@
           width: drawWidth, height: drawHeight,
         });
 
-        const pdfDataUri = await newPdf.saveAsBase64({ dataUri: true });
+        // Gera o arquivo binário puro (Uint8Array)
+        const pdfBytes = await newPdf.save();
 
         const suffix = processedCrops.length > 1 ? `_split_${i + 1}` : `_recortado`;
         const fileName = `${originalFileName}${suffix}_pag${pageNum}.pdf`;
@@ -696,10 +710,16 @@
             <img src="${imgDataUrl}" alt="Prévia do documento">
           </div>
 
-          <a href="${pdfDataUri}" download="${fileName}" class="btn-link btn-success" style="justify-content: center;">
-            ⬇️ Baixar PDF
-          </a>
+          <button class="btn-success btn-download-single" style="justify-content: center; width: 100%;">
+            ⬇️ Baixar PDF Desbloqueado
+          </button>
         `;
+
+        // Atribui o evento de download limpo diretamente ao botão do card
+        const btnDownload = card.querySelector('.btn-download-single');
+        btnDownload.addEventListener('click', () => {
+          triggerCleanDownload(pdfBytes, fileName);
+        });
 
         resultsGrid.appendChild(card);
       }
